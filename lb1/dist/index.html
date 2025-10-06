@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Tetris - Web (lb1)</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="start-modal" class="modal-overlay active">
+    <div class="modal">
+      <h2>Neon Tetris</h2>
+      <p>Введите ваше имя для начала игры</p>
+      <input type="text" id="modal-input" placeholder="Ваше имя..." maxlength="15" autofocus />
+      <button id="modal-button">Начать игру</button>
+      <div class="leaderboard-preview">
+        <h3>Лучшие результаты</h3>
+        <div id="leaderboard-preview-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="pause-modal" class="modal-overlay">
+    <div class="modal">
+      <h2>Пауза</h2>
+      <p>Игра приостановлена</p>
+      <div class="modal-buttons">
+        <button id="resume-button">Продолжить</button>
+        <button id="restart-modal-button">Рестарт</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameover-modal" class="modal-overlay">
+    <div class="modal">
+      <h2>Игра окончена</h2>
+      <div class="score-display">
+        <div>Ваш счет: <span id="final-score">0</span></div>
+        <div>Уровень: <span id="final-level">1</span></div>
+        <div>Линии: <span id="final-lines">0</span></div>
+      </div>
+      <div class="modal-buttons">
+        <button id="gameover-restart">Новая игра</button>
+      </div>
+      <div class="leaderboard-preview">
+        <h3>Лучшие результаты</h3>
+        <div id="gameover-leaderboard"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="leaderboard-modal" class="modal-overlay">
+    <div class="modal">
+      <h2>Таблица рекордов</h2>
+      <div class="leaderboard-full">
+        <div id="leaderboard-list"></div>
+      </div>
+      <div class="modal-buttons">
+        <button id="close-leaderboard">Закрыть</button>
+        <button id="clear-leaderboard">Очистить таблицу</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <div class="game-area">
+      <div class="canvas-wrap">
+        <div class="overlay">
+          <button class="control" id="btn-pause">Пауза</button>
+          <button class="control" id="btn-leaderboard">Таблица рекордов</button>
+        </div>
+        <canvas id="tetris"></canvas>
+      </div>
+
+      <div class="panel">
+        <div class="card player">
+          <h3>Игрок</h3>
+          <input type="text" id="username" placeholder="Введите имя..." maxlength="15" />
+        </div>
+
+        <div class="card">
+          <h3>Счет</h3>
+          <div class="big" id="score">0</div>
+          <div class="meta">
+            <div>Уровень: <span id="level">1</span></div>
+            <div>Линии: <span id="lines">0</span></div>
+          </div>
+        </div>
+
+        <div class="mini-panels">
+          <div class="card small">
+            <h3>Следующая</h3>
+            <canvas id="next" width="120" height="120"></canvas>
+          </div>
+
+          <div class="card small">
+            <h3>Управление</h3>
+            <div class="legend">
+              <ul>
+                <li>←→ Движение</li>
+                <li>↑ Вращение</li>
+                <li>↓ Ускорение</li>
+                <li>Пробел - Сброс</li>
+                <li>Z - Поворот</li>
+                <li>P - Пауза</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Последние результаты</h3>
+          <div id="recent-scores"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Гребнев Егор | гр. 3343</div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "tetris-frontend",
+  "version": "1.0.0",
+  "description": "Tetris game frontend",
+  "main": "dist/main.js",
+  "scripts": {
+    "clean": "rm -rf dist && mkdir -p dist",
+    "build:ts": "tsc --project tsconfig.json",
+    "build:css": "sass src/styles/style.scss dist/styles/style.css --no-source-map --style=compressed",
+    "copy:html": "mkdir -p dist && cp -r public/* dist/",
+    "build": "npm run clean && npm run build:css && npm run build:ts && npm run copy:html"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "sass": "^1.69.0"
+  }
+}
