@@ -12,7 +12,6 @@ const levelEl = document.getElementById("level")!;
 const linesEl = document.getElementById("lines")!;
 const usernameInput = document.getElementById("username") as HTMLInputElement;
 const btnPause = document.getElementById("btn-pause") as HTMLButtonElement;
-const btnRestart = document.getElementById("btn-restart") as HTMLButtonElement;
 const btnLeaderboard = document.getElementById("btn-leaderboard") as HTMLButtonElement;
 const recentScoresEl = document.getElementById("recent-scores") as HTMLDivElement;
 
@@ -358,7 +357,7 @@ setupCanvasScale();
 window.addEventListener("resize", setupCanvasScale);
 
 function gravityInterval(level: number) {
-    return Math.max(100, 1000 * Math.pow(0.8, Math.max(1, level) - 1));
+    return Math.max(100, 100 * Math.pow(0.8, Math.max(1, level) - 1));
 }
 
 let last = performance.now();
@@ -432,33 +431,6 @@ function checkCollision(board: (string | null)[][], piece: Piece): boolean {
 }
 
 
-function gameLoop(now = performance.now()) {
-    const dt = Math.min(now - last, 1000 / 60);
-    last = now;
-
-    if (!paused && !game.gameOver && username) {
-        accumulator += dt;
-        while (accumulator >= gravity) {
-            game.tick();
-            if (game.gameOver) {
-
-                break;
-            }
-            accumulator -= gravity;
-        }
-        gravity = gravityInterval(game.level);
-    }
-
-    updateParticles(dt);
-    render();
-
-    if (game.gameOver && !gameoverModal.classList.contains('active')) {
-        handleGameOver();
-    }
-
-    animationFrameId = requestAnimationFrame(gameLoop);
-}
-animationFrameId = requestAnimationFrame(gameLoop);
 
 function updateParticles(dt: number) {
     particleSystems = particleSystems.filter(system => {
@@ -713,7 +685,7 @@ function processKeyRepeat(now: number) {
     });
 }
 
-function enhancedGameLoop(now = performance.now()) {
+function gameLoop(now = performance.now()) {
     const dt = Math.min(now - last, 1000 / 60);
     last = now;
 
@@ -740,12 +712,10 @@ function enhancedGameLoop(now = performance.now()) {
         handleGameOver();
     }
 
-    animationFrameId = requestAnimationFrame(enhancedGameLoop);
+    animationFrameId = requestAnimationFrame(gameLoop);
 }
 
-
-cancelAnimationFrame(animationFrameId);
-animationFrameId = requestAnimationFrame(enhancedGameLoop);
+animationFrameId = requestAnimationFrame(gameLoop);
 
 btnPause.addEventListener("click", () => {
     paused = !paused;
@@ -757,14 +727,6 @@ btnPause.addEventListener("click", () => {
     }
 });
 
-btnRestart.addEventListener("click", () => {
-    game = new Tetris(C_W, C_H);
-    paused = false;
-    btnPause.textContent = "Пауза";
-    particleSystems = [];
-    createParticleSystem(LOGICAL_W / 2, LOGICAL_H / 2, "#00ff88", 30);
-    hideAllModals();
-});
 
 usernameInput.addEventListener("change", () => {
     username = usernameInput.value.trim();

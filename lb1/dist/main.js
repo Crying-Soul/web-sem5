@@ -9,7 +9,6 @@ const levelEl = document.getElementById("level");
 const linesEl = document.getElementById("lines");
 const usernameInput = document.getElementById("username");
 const btnPause = document.getElementById("btn-pause");
-const btnRestart = document.getElementById("btn-restart");
 const btnLeaderboard = document.getElementById("btn-leaderboard");
 const recentScoresEl = document.getElementById("recent-scores");
 // Модальные окна
@@ -278,7 +277,7 @@ function setupCanvasScale() {
 setupCanvasScale();
 window.addEventListener("resize", setupCanvasScale);
 function gravityInterval(level) {
-    return Math.max(100, 1000 * Math.pow(0.8, Math.max(1, level) - 1));
+    return Math.max(100, 100 * Math.pow(0.8, Math.max(1, level) - 1));
 }
 let last = performance.now();
 let accumulator = 0;
@@ -338,28 +337,6 @@ function checkCollision(board, piece) {
     }
     return false;
 }
-function gameLoop(now = performance.now()) {
-    const dt = Math.min(now - last, 1000 / 60);
-    last = now;
-    if (!paused && !game.gameOver && username) {
-        accumulator += dt;
-        while (accumulator >= gravity) {
-            game.tick();
-            if (game.gameOver) {
-                break;
-            }
-            accumulator -= gravity;
-        }
-        gravity = gravityInterval(game.level);
-    }
-    updateParticles(dt);
-    render();
-    if (game.gameOver && !gameoverModal.classList.contains('active')) {
-        handleGameOver();
-    }
-    animationFrameId = requestAnimationFrame(gameLoop);
-}
-animationFrameId = requestAnimationFrame(gameLoop);
 function updateParticles(dt) {
     particleSystems = particleSystems.filter(system => {
         system.update(dt);
@@ -576,7 +553,7 @@ function processKeyRepeat(now) {
         }
     });
 }
-function enhancedGameLoop(now = performance.now()) {
+function gameLoop(now = performance.now()) {
     const dt = Math.min(now - last, 1000 / 60);
     last = now;
     processKeyRepeat(now);
@@ -596,10 +573,9 @@ function enhancedGameLoop(now = performance.now()) {
     if (game.gameOver && !gameoverModal.classList.contains('active')) {
         handleGameOver();
     }
-    animationFrameId = requestAnimationFrame(enhancedGameLoop);
+    animationFrameId = requestAnimationFrame(gameLoop);
 }
-cancelAnimationFrame(animationFrameId);
-animationFrameId = requestAnimationFrame(enhancedGameLoop);
+animationFrameId = requestAnimationFrame(gameLoop);
 btnPause.addEventListener("click", () => {
     paused = !paused;
     btnPause.textContent = paused ? "Продолжить" : "Пауза";
@@ -609,14 +585,6 @@ btnPause.addEventListener("click", () => {
     else {
         hideAllModals();
     }
-});
-btnRestart.addEventListener("click", () => {
-    game = new Tetris(C_W, C_H);
-    paused = false;
-    btnPause.textContent = "Пауза";
-    particleSystems = [];
-    createParticleSystem(LOGICAL_W / 2, LOGICAL_H / 2, "#00ff88", 30);
-    hideAllModals();
 });
 usernameInput.addEventListener("change", () => {
     username = usernameInput.value.trim();

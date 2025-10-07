@@ -63,7 +63,7 @@ export function checkCollision(board: (string | null)[][], piece: Piece): boolea
                 }
 
                 // Проверяем столкновение с другими фигурами (только если внутри игрового поля)
-                if (boardY >= 0 && board[boardY][boardX] !== null) { // Проверяем на null
+                if (boardY >= 0 && board[boardY][boardX] !== null) { 
                     return true;
                 }
             }
@@ -77,7 +77,6 @@ export function rotatePiece(piece: Piece, direction: number = 1): Piece {
     const rows = shape.length;
     const cols = shape[0].length;
 
-    // Создаем новую матрицу для повернутой фигуры
     const newShape: number[][] = [];
 
     if (direction === 1) { // По часовой стрелке

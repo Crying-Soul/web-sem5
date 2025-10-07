@@ -1,8 +1,7 @@
-// engine/tetris.ts
 import { Piece, GameState } from "./types";
 import { createPiece, checkCollision, rotatePiece } from "./utils";
 
-export class Tetris {
+export class Tetris implements GameState{
     public board: (string | null)[][];
     public currentPiece: Piece | null = null;
     public nextPiece: Piece | null = null;
@@ -94,7 +93,6 @@ export class Tetris {
             }
         }
 
-        // Проверяем заполненные линии
         const linesCleared = this.clearLines();
         this.updateScore(linesCleared);
 
@@ -107,7 +105,6 @@ export class Tetris {
 
         while (y >= 0) {
             if (this.board[y].every(cell => cell !== null)) {
-                // Удаляем линию и добавляем новую пустую сверху
                 this.board.splice(y, 1);
                 this.board.unshift(Array(this.width).fill(null));
                 linesCleared++;
@@ -124,7 +121,7 @@ export class Tetris {
         const linePoints = [0, 40, 100, 300, 1200];
         this.score += linePoints[linesCleared] * this.level;
         this.lines += linesCleared;
-        this.level = Math.floor(this.lines / 10) + 1;
+        this.level = Math.floor(this.lines / 1) + 1;
     }
 
     public tick(): void {

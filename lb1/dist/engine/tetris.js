@@ -80,7 +80,6 @@ export class Tetris {
                 }
             }
         }
-        // Проверяем заполненные линии
         const linesCleared = this.clearLines();
         this.updateScore(linesCleared);
         this.spawnPiece();
@@ -90,7 +89,6 @@ export class Tetris {
         let y = this.height - 1;
         while (y >= 0) {
             if (this.board[y].every(cell => cell !== null)) {
-                // Удаляем линию и добавляем новую пустую сверху
                 this.board.splice(y, 1);
                 this.board.unshift(Array(this.width).fill(null));
                 linesCleared++;
@@ -106,7 +104,7 @@ export class Tetris {
         const linePoints = [0, 40, 100, 300, 1200];
         this.score += linePoints[linesCleared] * this.level;
         this.lines += linesCleared;
-        this.level = Math.floor(this.lines / 10) + 1;
+        this.level = Math.floor(this.lines / 1) + 1;
     }
     tick() {
         if (this.gameOver)
