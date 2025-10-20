@@ -1,0 +1,84 @@
+doctype html
+html(lang="ru")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title= title || 'Библиотека'
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    //- link(rel="stylesheet", href="/css/main.css")
+  body
+    .app-container
+      nav.navbar
+        .container
+          .nav-menu(style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;")
+            a.nav-brand(href="/")
+              i.fas.fa-book
+              | Библиотека
+            
+            .nav-links(style="display: flex; gap: 1rem; align-items: center;")
+              - const isBooksActive = currentPath && currentPath.startsWith('/books')
+              - const isHomeActive = currentPath === '/'
+              a.nav-link(href="/", class=isHomeActive ? 'active' : '') Главная
+              a.nav-link(href="/books", class=isBooksActive ? 'active' : '') Книги
+              
+              if isAuthenticated
+                form(method="POST", action="/auth/logout", style="display: inline;")
+                  button.btn.btn-outline.btn-sm(type="submit") Выйти
+              else
+                .auth-links(style="display: flex; gap: 0.5rem;")
+                  a.nav-link(href="/auth/login") Войти
+                  a.nav-link(href="/auth/register") Регистрация
+
+      main.main-content
+        .container
+          if messages && Object.keys(messages).length > 0
+            #flashMessages(
+              data-messages=JSON.stringify(messages)
+              style="display: none;"
+            )
+          
+          block content
+
+      script(src="/js/main.js")
+
+    //- Модальное окно подтверждения удаления
+    #deleteModal.modal-overlay(style="display: none;")
+      .modal
+        .modal-header
+          h2 Подтверждение удаления
+          button.close-btn(type="button", onclick="window.closeModal('deleteModal')") &times;
+        .modal-body
+        .modal-footer
+          button.btn.btn-outline(type="button", onclick="window.closeModal('deleteModal')") Отмена
+          button#confirmDelete.btn.btn-danger(type="button") Удалить
+
+    //- Модальное окно взятия книги
+    #borrowModal.modal-overlay(style="display: none;")
+      .modal
+        .modal-header
+          h2 Взять книгу
+          button.close-btn(type="button", onclick="window.closeModal('borrowModal')") &times;
+        .modal-body
+          h3.mb-2 Взять книгу "<span id="borrowBookTitle"></span>"
+          form#borrowForm
+            .form-group
+              label(for="borrowerName") Ваше имя
+              input.form-control#borrowerName(
+                type="text", 
+                name="borrowerName", 
+                required,
+                placeholder="Введите ваше имя"
+              )
+            .form-group
+              label(for="days") Срок аренды (дни)
+              input.form-control#days(
+                type="number", 
+                name="days", 
+                min="1", 
+                max="365", 
+                value="14",
+                required
+              )
+        .modal-footer
+          button.btn.btn-outline(type="button", onclick="window.closeModal('borrowModal')") Отмена
+          button.btn.btn-primary(type="submit", form="borrowForm") Взять книгу

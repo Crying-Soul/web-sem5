@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  .error-container(style="text-align: center; padding: 4rem 0;")
+    .error-icon(style="font-size: 4rem; color: #e63946; margin-bottom: 1rem;")
+      i.fas.fa-exclamation-triangle
+    h1(style="color: white; margin-bottom: 1rem;")= message
+    if error
+      .error-details(style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;")
+        code(style="color: white;")= error
+    a.btn.btn-primary(href="/")
+      i.fas.fa-home
+      | На главную

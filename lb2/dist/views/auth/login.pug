@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+  .auth-container(style="max-width: 400px; margin: 0 auto;")
+    h1(style="color: white; text-align: center; margin-bottom: 2rem;") Вход
+
+    .card(style="background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 12px;")
+      form(method="POST", action="/auth/login")
+        .form-group
+          label(for="username") Имя пользователя
+          input.form-control#username(
+            type="text", 
+            name="username", 
+            required,
+            placeholder="Введите имя пользователя"
+          )
+
+        .form-group
+          label(for="password") Пароль
+          input.form-control#password(
+            type="password", 
+            name="password", 
+            required,
+            placeholder="Введите пароль"
+          )
+
+        .form-actions(style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;")
+          button.btn.btn-primary.btn-block(type="submit")
+            i.fas.fa-sign-in-alt
+            | Войти
+          a.btn.btn-outline.btn-block(href="/auth/register") Создать аккаунт

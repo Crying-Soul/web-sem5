@@ -277,7 +277,7 @@ function setupCanvasScale() {
 setupCanvasScale();
 window.addEventListener("resize", setupCanvasScale);
 function gravityInterval(level) {
-    return Math.max(100, 100 * Math.pow(0.8, Math.max(1, level) - 1));
+    return Math.max(100, 1000 * Math.pow(0.8, Math.max(1, level) - 1));
 }
 let last = performance.now();
 let accumulator = 0;

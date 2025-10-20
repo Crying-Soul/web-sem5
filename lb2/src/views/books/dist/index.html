@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    <div class="app-container">
+      <nav class="navbar">
+        <div class="container">
+          <div class="nav-menu" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;"><a class="nav-brand" href="/"><i class="fas fa-book"></i>Библиотека</a>
+            <div class="nav-links" style="display: flex; gap: 1rem; align-items: center;"><a class="nav-link" href="/">Главная</a><a class="nav-link" href="/books">Книги</a>
+              <div class="auth-links" style="display: flex; gap: 0.5rem;"><a class="nav-link" href="/auth/login">Войти</a><a class="nav-link" href="/auth/register">Регистрация</a></div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <main class="main-content">
+        <div class="container">
+          <div class="books-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <h1 style="color: white;">Коллекция книг</h1><a class="btn btn-primary" href="/books/create"><i class="fas fa-plus"></i>Добавить книгу</a>
+          </div>
+          <div class="filter-section">
+            <div class="filter-grid">
+              <div class="search-box"><i class="fas fa-search search-icon"></i>
+                <input class="form-control" id="searchInput" type="text" placeholder="Поиск по названию, автору или ISBN..." value="">
+              </div>
+              <div class="form-group">
+                <label for="statusFilter">Статус</label>
+                <select class="form-control" id="statusFilter">
+                  <option value="all" selected>Все книги</option>
+                  <option value="available">Доступные</option>
+                  <option value="borrowed">Взятые</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <input id="overdueFilter" type="checkbox">
+                  <label for="overdueFilter" style="margin: 0;">Только просроченные</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="booksContainer">
+            <div class="empty-state"><i class="fas fa-book-open"></i>
+              <h3>Книги не найдены</h3>
+              <p>Попробуйте изменить параметры поиска или фильтры</p>
+            </div>
+          </div>
+        </div>
+      </main>
+      <script src="/js/main.js"></script>
+    </div>
+    <div class="modal-overlay" id="deleteModal" style="display: none;">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Подтверждение удаления</h2>
+          <button class="close-btn" type="button" onclick="window.closeModal('deleteModal')">&times;</button>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" type="button" onclick="window.closeModal('deleteModal')">Отмена</button>
+          <button class="btn btn-danger" id="confirmDelete" type="button">Удалить</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="borrowModal" style="display: none;">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Взять книгу</h2>
+          <button class="close-btn" type="button" onclick="window.closeModal('borrowModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <h3 class="mb-2">Взять книгу "<span id="borrowBookTitle"></span>"</h3>
+          <form id="borrowForm">
+            <div class="form-group">
+              <label for="borrowerName">Ваше имя</label>
+              <input class="form-control" id="borrowerName" type="text" name="borrowerName" required placeholder="Введите ваше имя">
+            </div>
+            <div class="form-group">
+              <label for="days">Срок аренды (дни)</label>
+              <input class="form-control" id="days" type="number" name="days" min="1" max="365" value="14" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" type="button" onclick="window.closeModal('borrowModal')">Отмена</button>
+          <button class="btn btn-primary" type="submit" form="borrowForm">Взять книгу</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

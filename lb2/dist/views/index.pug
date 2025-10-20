@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  .hero-section(style="text-align: center; padding: 4rem 0;")
+    h1(style="font-size: 3rem; margin-bottom: 1rem; color: white;") Добро пожаловать в Библиотеку
+    p(style="font-size: 1.2rem; margin-bottom: 2rem; color: rgba(255,255,255,0.9);") Управляйте своей коллекцией книг с легкостью
+    .hero-actions(style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;")
+      a.btn.btn-primary(href="/books", style="padding: 1rem 2rem;")
+        i.fas.fa-book
+        | Просмотреть книги
+      a.btn.btn-outline(href="/books/create", style="padding: 1rem 2rem; color: white; border-color: white;")
+        i.fas.fa-plus
+        | Добавить книгу
+
+  .features-section(style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem;")
+    .feature-card(style="background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 12px; text-align: center;")
+      i.fas.fa-search(style="font-size: 3rem; color: #4361ee; margin-bottom: 1rem;")
+      h3(style="margin-bottom: 1rem;") Поиск и фильтрация
+      p Находите книги по названию, автору или ISBN с расширенными фильтрами.
+
+    .feature-card(style="background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 12px; text-align: center;")
+      i.fas.fa-exchange-alt(style="font-size: 3rem; color: #4361ee; margin-bottom: 1rem;")
+      h3(style="margin-bottom: 1rem;") Аренда и возврат
+      p Простая система аренды книг с отслеживанием сроков и уведомлениями.
+
+    .feature-card(style="background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 12px; text-align: center;")
+      i.fas.fa-images(style="font-size: 3rem; color: #4361ee; margin-bottom: 1rem;")
+      h3(style="margin-bottom: 1rem;") Управление обложками
+      p Загружайте и управляйте обложками книг для визуального представления.

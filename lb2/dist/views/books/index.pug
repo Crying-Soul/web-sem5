@@ -1,0 +1,90 @@
+extends ../layout
+
+block content
+  .books-header(style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;")
+    h1(style="color: white;") Коллекция книг
+    a.btn.btn-primary(href="/books/create")
+      i.fas.fa-plus
+      | Добавить книгу
+
+  .filter-section
+    .filter-grid
+      .search-box
+        i.fas.fa-search.search-icon
+        input.form-control#searchInput(
+          type="text", 
+          placeholder="Поиск по названию, автору или ISBN...",
+          value=query || ''
+        )
+      
+      .form-group
+        label(for="statusFilter") Статус
+        select.form-control#statusFilter
+          - const statusValue = filters && filters.status ? filters.status : 'all'
+          option(value="all", selected=statusValue === 'all') Все книги
+          option(value="available", selected=statusValue === 'available') Доступные
+          option(value="borrowed", selected=statusValue === 'borrowed') Взятые
+      
+      .form-group
+        .checkbox-group(style="display: flex; align-items: center; gap: 0.5rem;")
+          input#overdueFilter(
+            type="checkbox", 
+            checked=filters && filters.showOverdue ? true : false
+          )
+          label(for="overdueFilter", style="margin: 0;") Только просроченные
+
+  #booksContainer
+    if books && books.length > 0
+      .books-grid(style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;")
+        each book in books
+          .book-card
+            if book.coverImage
+              img.book-cover(
+                src=book.coverImage, 
+                alt=book.title,
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              )
+            .book-cover-placeholder(style=book.coverImage ? 'display: none;' : '')
+              i.fas.fa-book
+            .book-content
+              h3.book-title= book.title
+              p.book-author автор: #{book.author}
+              p.book-meta Год издания: #{new Date(book.publicationDate).getFullYear()}
+              p.book-meta ISBN: #{book.isbn}
+              
+              .mb-2
+                span.status-badge(class=book.status)= book.status === 'available' ? 'Доступна' : 'Взята'
+                if book.isOverdue
+                  span.status-badge.overdue Просрочена
+
+              .action-buttons(style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;")
+                a.btn.btn-primary.btn-sm(href=`/books/${book.id}`, title="Подробнее")
+                  i.fas.fa-eye
+                a.btn.btn-outline.btn-sm(href=`/books/${book.id}/edit`, title="Редактировать")
+                  i.fas.fa-edit
+                button.btn.btn-danger.btn-sm.delete-btn(
+                  data-book-id=book.id,
+                  data-book-title=book.title,
+                  title="Удалить книгу"
+                )
+                  i.fas.fa-trash
+                
+                //- This was the problematic section - fixed indentation
+                if book.status === 'available'
+                  button.btn.btn-success.btn-sm.borrow-btn(
+                    data-book-id=book.id,
+                    data-book-title=book.title,
+                    title="Взять книгу"
+                  )
+                    i.fas.fa-hand-holding
+                else
+                  button.btn.btn-warning.btn-sm.return-btn(
+                    data-book-id=book.id,
+                    title="Вернуть книгу"
+                  )
+                    i.fas.fa-undo
+    else
+      .empty-state
+        i.fas.fa-book-open
+        h3 Книги не найдены
+        p Попробуйте изменить параметры поиска или фильтры

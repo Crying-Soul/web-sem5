@@ -1,0 +1,42 @@
+extends ../layout
+
+block content
+  .auth-container(style="max-width: 400px; margin: 0 auto;")
+    h1(style="color: white; text-align: center; margin-bottom: 2rem;") Регистрация
+
+    .card(style="background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 12px;")
+      form(method="POST", action="/auth/register")
+        .form-group
+          label(for="username") Имя пользователя
+          input.form-control#username(
+            type="text", 
+            name="username", 
+            required,
+            placeholder="Выберите имя пользователя"
+          )
+
+        .form-group
+          label(for="email") Email
+          input.form-control#email(
+            type="email", 
+            name="email", 
+            required,
+            placeholder="Введите ваш email"
+          )
+
+        .form-group
+          label(for="password") Пароль
+          input.form-control#password(
+            type="password", 
+            name="password", 
+            required,
+            placeholder="Придумайте пароль (минимум 6 символов)",
+            minlength="6"
+          )
+          small(style="color: #666;") Пароль должен содержать не менее 6 символов
+
+        .form-actions(style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;")
+          button.btn.btn-primary.btn-block(type="submit")
+            i.fas.fa-user-plus
+            | Зарегистрироваться
+          a.btn.btn-outline.btn-block(href="/auth/login") Назад к входу

@@ -1,0 +1,91 @@
+extends ../layout
+
+block content
+  .form-container(style="max-width: 600px; margin: 0 auto;")
+    h1(style="color: white; margin-bottom: 2rem;") Добавить книгу
+
+    .card(style="background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 12px;")
+      form(method="POST", action="/books", enctype="multipart/form-data")
+        .form-group
+          label(for="title") Название *
+          input.form-control#title(
+            type="text", 
+            name="title", 
+            required,
+            value=(formData && formData.title) || '',
+            placeholder="Введите название книги"
+          )
+          - const hasTitleError = errors && errors.includes('Название обязательно')
+          if hasTitleError
+            .form-error Название обязательно
+
+        .form-group
+          label(for="author") Автор *
+          input.form-control#author(
+            type="text", 
+            name="author", 
+            required,
+            value=(formData && formData.author) || '',
+            placeholder="Введите имя автора"
+          )
+          - const hasAuthorError = errors && errors.includes('Автор обязателен')
+          if hasAuthorError
+            .form-error Автор обязателен
+
+        .form-group
+          label(for="publicationDate") Дата публикации *
+          input.form-control#publicationDate(
+            type="date", 
+            name="publicationDate", 
+            required,
+            value=(formData && formData.publicationDate) || ''
+          )
+          - const hasDateRequiredError = errors && errors.includes('Дата публикации обязательна')
+          - const hasDateInvalidError = errors && errors.includes('Некорректная дата публикации')
+          - const hasDateFutureError = errors && errors.includes('Дата публикации не может быть в будущем')
+          if hasDateRequiredError
+            .form-error Дата публикации обязательна
+          else if hasDateInvalidError
+            .form-error Некорректная дата публикации
+          else if hasDateFutureError
+            .form-error Дата публикации не может быть в будущем
+
+        .form-group
+          label(for="isbn") ISBN *
+          input.form-control#isbn(
+            type="text", 
+            name="isbn", 
+            required,
+            value=(formData && formData.isbn) || '',
+            placeholder="Введите ISBN (10 или 13 цифр)"
+          )
+          - const hasIsbnRequiredError = errors && errors.includes('ISBN обязателен')
+          - const hasIsbnFormatError = errors && errors.includes('Некорректный ISBN')
+          if hasIsbnRequiredError
+            .form-error ISBN обязателен
+          else if hasIsbnFormatError
+            .form-error ISBN должен содержать 10 или 13 цифр
+
+        .form-group
+          label(for="coverImageFile") Обложка
+          input.form-control#coverImageFile(
+            type="file", 
+            name="coverImageFile",
+            accept="image/*"
+          )
+          small(style="color: #666;") Необязательно. Макс. 5МБ. Форматы: JPG, PNG, GIF, WebP
+
+        .form-group
+          label(for="coverImage") Или URL обложки
+          input.form-control#coverImage(
+            type="url", 
+            name="coverImage",
+            value=(formData && formData.coverImage) || '',
+            placeholder="https://example.com/cover.jpg"
+          )
+
+        .form-actions(style="display: flex; gap: 1rem; margin-top: 2rem;")
+          button.btn.btn-primary(type="submit")
+            i.fas.fa-plus
+            | Добавить книгу
+          a.btn.btn-outline(href="/books") Отмена
