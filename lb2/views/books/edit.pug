@@ -2,7 +2,8 @@ extends ../layout
 
 block content
   h2 Редактировать книгу
-  form#edit-form(method="post" enctype="multipart/form-data" action=`/api/books/${book.id}?_method=PUT`)
+  form#edit-form(method="post" enctype="multipart/form-data" action=`/api/books/${book.id}`)
+    //- we submit to API directly (no method override) — server accepts POST/PUT accordingly
     label
       span.label-text Название
       input.input(type="text" name="title" value=book.title required)

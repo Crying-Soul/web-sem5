@@ -15,4 +15,5 @@ export type Book = {
 export interface BookFilters {
   isAvailable?: boolean;
   isOverdue?: boolean;
+  q?: string;
 }

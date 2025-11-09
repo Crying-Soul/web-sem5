@@ -5,10 +5,10 @@ block content
   form#add-form(method="post" enctype="multipart/form-data" action="/api/books")
     label
       span.label-text Название
-      input.input(type="text" name="title" required)
+      input.input(type="text" name="title" required autocomplete="off")
     label
       span.label-text Автор
-      input.input(type="text" name="author" required)
+      input.input(type="text" name="author" required autocomplete="off")
     label
       span.label-text Дата выпуска
       input.input(type="date" name="publicationDate" required)

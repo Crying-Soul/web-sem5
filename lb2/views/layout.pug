@@ -2,23 +2,30 @@ doctype html
 html(lang="ru")
   head
     meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width,initial-scale=1")
-    title Library
-    link(rel="preconnect" href="https://fonts.gstatic.com")
+    meta(name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover")
+    title #{title || 'Library'}
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
     link(href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet")
     link(rel="stylesheet" href="/css/style.css")
-    script(defer src="https://kit.fontawesome.com/31a585b270.js")
+    script(defer src="https://kit.fontawesome.com/31a585b270.js" crossorigin)
     block head
   body
     header.site-header
-      .container
+      .container.header-inner
         a.brand(href="/")
           i.fas.fa-book-open
           span.brand-text Домашняя библиотека
-        nav
-          a.btn(href="/books/create") <i class="fas fa-plus"></i> Добавить
+        .header-controls
+          form#quick-search(action="/books" method="get" role="search")
+            input.search-input(name="q" type="search" placeholder="Поиск по названию или автору" aria-label="Поиск по книгам")
+          nav
+            a.btn(href="/books/create") <i class="fas fa-plus"></i> Добавить
+            button.icon-btn(aria-label="Тема" id="theme-toggle" type="button") 
+
     main.container
       block content
-    include ../views/partials/modals.pug
+    //- Floating toasts / inline messages
+    #toast-container
+    include ./partials/modals.pug
     script(src="/js/app.js" defer)
     block scripts

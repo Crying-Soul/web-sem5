@@ -4,7 +4,10 @@
     "title": "Мастер и Маргарита",
     "author": "Михаил Булгаков",
     "publicationDate": "1967-01-01",
-    "isAvailable": true
+    "isAvailable": false,
+    "borrower": "Crying Soul",
+    "dueDate": "2025-11-13T00:00:00.000Z",
+    "updatedAt": "2025-11-09T18:02:24.366Z"
   },
   {
     "id": "2",
@@ -23,13 +26,12 @@
     "isAvailable": true
   },
   {
-    "title": "123",
-    "author": "Классный Автор 12",
-    "publicationDate": "2112-03-12",
-    "id": "mhrvnzkxtszahandrbc",
-    "isAvailable": false,
-    "borrower": "Vasya",
-    "dueDate": "2025-11-10T00:00:00.000Z",
-    "updatedAt": "2025-11-09T17:34:15.466Z"
+    "id": "f3e17731-4647-420f-afb7-1d5483da56d3",
+    "title": "фыа",
+    "author": "фыв",
+    "publicationDate": "2025-11-05T00:00:00.000Z",
+    "coverImage": "mhs1m10a-1c86f023-6986-4c36-b4b0-3f947153b532.jpg",
+    "isAvailable": true,
+    "createdAt": "2025-11-09T18:24:30.111Z"
   }
 ]

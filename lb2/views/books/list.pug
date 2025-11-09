@@ -1,31 +1,39 @@
 extends ../layout
 
+block head
+  // optional small inline-critical CSS for skeleton (keeps initial paint fast)
+  style.
+    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e9eefb 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; border-radius:6px; }
+    @keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+
 block content
   .page-head
     h1.page-title Список книг
-    form#filter-form.form-inline
-      select.input(name="isAvailable")
-        option(value="") Все
-        option(value="true" selected=filters.isAvailable==='true') В наличии
-        option(value="false" selected=filters.isAvailable==='false') Выданы
-      label.checkbox
-        input(type="checkbox" name="isOverdue" checked=filters.isOverdue==='true')
-        | Просрочены
-      button.btn.btn-outline(type="submit") Применить
-  if books.length === 0
-    .empty
-      i.fas.fa-book-open.fa-3x
-      p Нет книг — добавьте первую
-  else
-    table.table
-      thead
+    .controls
+      form#filter-form.form-inline
+        select.input(name="isAvailable" aria-label="Фильтр по статусу")
+          option(value="") Все
+          option(value="true" selected=(filters.isAvailable === 'true')) В наличии
+          option(value="false" selected=(filters.isAvailable === 'false')) Выданы
+        label.checkbox
+          input(type="checkbox" name="isOverdue" checked=(filters.isOverdue === 'true'))
+          | Просрочены
+        button.btn.btn-outline(type="submit") Применить
+        button.btn.btn-ghost(type="button" id="reset-filters") Сбросить
+  // skeleton placeholder (will be removed quickly by JS)
+  table.table(aria-live="polite")
+    thead
+      tr
+        th Название
+        th Автор
+        th Дата выпуска
+        th Статус
+        th.actions Действия
+    tbody#books-table-body
+      if books.length === 0
         tr
-          th Название
-          th Автор
-          th Дата выпуска
-          th Статус
-          th.actions Действия
-      tbody#books-table-body
+          td(colspan="5").empty Нет книг, соответствующих фильтрам
+      else
         each book in books
           tr(data-id=book.id)
             td.title= book.title
@@ -43,5 +51,15 @@ block content
                 i.fas.fa-eye
               a.icon-btn(href=`/books/${book.id}/edit` title="Редактировать")
                 i.fas.fa-edit
-              button.icon-btn.icon-delete(title="Удалить" data-id=book.id)
+              button.icon-btn.icon-delete(type="button" aria-label="Удалить книгу" data-id=book.id) 
                 i.fas.fa-trash
+              if book.isAvailable
+                button.icon-btn(type="button" title="Выдать" data-action="open-borrow" data-id=book.id)
+                  i.fas.fa-hand-holding
+              else
+                button.icon-btn(type="button" title="Вернуть" data-action="do-return" data-id=book.id)
+                  i.fas.fa-undo
+
+block scripts
+  script.
+    window.initialFilters = !{JSON.stringify(filters)};

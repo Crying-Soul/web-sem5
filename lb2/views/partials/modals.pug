@@ -1,25 +1,29 @@
 // Delete confirmation modal
 div#modal-delete.modal(role="dialog" aria-modal="true" aria-hidden="true")
   .modal-card
+    button.modal-close(aria-label="Закрыть" data-action="close-modal") ×
     h3.modal-title Удалить книгу?
     p.modal-body Вы уверены, что хотите удалить эту книгу? Это действие нельзя отменить.
     .modal-actions
       button.btn.btn-ghost(type="button" data-action="cancel-delete") Отмена
       button.btn.btn-danger(type="button" data-action="confirm-delete") Удалить
+
 // Borrow modal
 div#modal-borrow.modal(role="dialog" aria-modal="true" aria-hidden="true")
   .modal-card
+    button.modal-close(aria-label="Закрыть" data-action="close-modal") ×
     h3.modal-title Выдать книгу
     form#form-borrow
       label
         span.label-text Имя читателя
-        input.input(type="text" name="borrowerName" required)
+        input.input(type="text" name="borrowerName" required autocomplete="name")
       label
         span.label-text Дата возврата
         input.input(type="date" name="dueDate" required)
       .modal-actions
         button.btn.btn-ghost(type="button" data-action="cancel-borrow") Отмена
         button.btn.btn-primary(type="submit") Выдать
+
 // Loading overlay
-div#loading.overlay.hidden
+div#loading.overlay.hidden aria-hidden="true"
   .spinner ⟳

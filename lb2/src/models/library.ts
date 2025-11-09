@@ -56,21 +56,33 @@ export class Library {
     return new Date().toISOString();
   }
 
-  getAll(filters?: BookFilters): Book[] {
+  getAll(filters?: BookFilters) {
     const today = new Date();
     let res = [...this.books];
-    
+
+    // текстовый поиск (q) — ищем подстроку в title или author, нечувствительно к регистру
+    if (filters?.q) {
+      const q = String(filters.q).trim().toLowerCase();
+      if (q.length > 0) {
+        res = res.filter(b => {
+          const title = (b.title || '').toLowerCase();
+          const author = (b.author || '').toLowerCase();
+          return title.includes(q) || author.includes(q);
+        });
+      }
+    }
+
     if (filters?.isAvailable !== undefined) {
       res = res.filter((b) => b.isAvailable === filters.isAvailable);
     }
-    
+
     if (filters?.isOverdue) {
       res = res.filter((b) => {
         if (b.isAvailable || !b.dueDate) return false;
         return new Date(b.dueDate).getTime() < today.getTime();
       });
     }
-    
+
     res.sort((a, b) => a.title.localeCompare(b.title, 'ru'));
     return res;
   }
@@ -79,11 +91,11 @@ export class Library {
     return this.books.find((b) => b.id === id);
   }
 
-  async add(data: { 
-    title: string; 
-    author: string; 
-    publicationDate: string; 
-    coverImage?: string 
+  async add(data: {
+    title: string;
+    author: string;
+    publicationDate: string;
+    coverImage?: string
   }): Promise<Book> {
     const newBook: Book = {
       id: uuidv4(),
@@ -94,7 +106,7 @@ export class Library {
       isAvailable: true,
       createdAt: this.now(),
     };
-    
+
     this.books.push(newBook);
     await this.save();
     return newBook;
@@ -103,9 +115,9 @@ export class Library {
   async update(id: string, patch: Partial<Book>): Promise<Book | undefined> {
     const i = this.books.findIndex((b) => b.id === id);
     if (i === -1) return undefined;
-    
+
     const old = this.books[i];
-    
+
     // Remove old cover image if replaced
     if (patch.coverImage && old.coverImage && patch.coverImage !== old.coverImage) {
       try {
@@ -114,13 +126,13 @@ export class Library {
         console.warn('Failed to remove old cover image:', error);
       }
     }
-    
-    const updated = { 
-      ...old, 
-      ...patch, 
-      updatedAt: this.now() 
+
+    const updated = {
+      ...old,
+      ...patch,
+      updatedAt: this.now()
     };
-    
+
     this.books[i] = updated;
     await this.save();
     return updated;
@@ -129,9 +141,9 @@ export class Library {
   async remove(id: string): Promise<boolean> {
     const i = this.books.findIndex((b) => b.id === id);
     if (i === -1) return false;
-    
+
     const book = this.books[i];
-    
+
     // Remove cover image
     if (book.coverImage) {
       try {
@@ -140,7 +152,7 @@ export class Library {
         console.warn('Failed to remove cover image:', error);
       }
     }
-    
+
     this.books.splice(i, 1);
     await this.save();
     return true;
@@ -149,15 +161,15 @@ export class Library {
   async borrow(id: string, borrowerName: string, dueDateIso: string): Promise<Book | undefined | null> {
     const book = this.getById(id);
     if (!book || !book.isAvailable) return undefined;
-    
+
     const due = new Date(dueDateIso);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     if (isNaN(due.getTime()) || due.getTime() < today.getTime()) {
       return null;
     }
-    
+
     return this.update(id, {
       isAvailable: false,
       borrower: borrowerName.trim(),
@@ -168,11 +180,11 @@ export class Library {
   async restore(id: string): Promise<Book | undefined> {
     const book = this.getById(id);
     if (!book || book.isAvailable) return undefined;
-    
-    return this.update(id, { 
-      isAvailable: true, 
-      borrower: undefined, 
-      dueDate: undefined 
+
+    return this.update(id, {
+      isAvailable: true,
+      borrower: undefined,
+      dueDate: undefined
     });
   }
 }

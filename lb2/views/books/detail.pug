@@ -28,6 +28,6 @@ block content
       a.btn(href="/") ← Назад
       a.btn(href=`/books/${book.id}/edit`) Редактировать
       if book.isAvailable
-        button.btn.btn-warning(data-action="open-borrow" data-id=book.id) Выдать
+        button.btn.btn-warning(type="button" data-action="open-borrow" data-id=book.id) Выдать
       else
-        button.btn.btn-success(data-action="do-return" data-id=book.id) Вернуть
+        button.btn.btn-success(type="button" data-action="do-return" data-id=book.id) Вернуть
