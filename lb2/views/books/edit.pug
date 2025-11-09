@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+  h2 Редактировать книгу
+  form#edit-form(method="post" enctype="multipart/form-data" action=`/api/books/${book.id}?_method=PUT`)
+    label
+      span.label-text Название
+      input.input(type="text" name="title" value=book.title required)
+    label
+      span.label-text Автор
+      input.input(type="text" name="author" value=book.author required)
+    label
+      span.label-text Дата выпуска
+      input.input(type="date" name="publicationDate" value=(new Date(book.publicationDate).toISOString().split('T')[0]) required)
+    label
+      span.label-text Обложка
+      input.input(type="file" name="coverImage" accept="image/*")
+    .form-actions
+      button.btn.btn-primary(type="submit") Сохранить
+      a.btn.btn-ghost(href=`/books/${book.id}`) Отмена

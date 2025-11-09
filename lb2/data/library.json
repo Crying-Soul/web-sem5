@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1",
+    "title": "Мастер и Маргарита",
+    "author": "Михаил Булгаков",
+    "publicationDate": "1967-01-01",
+    "isAvailable": true
+  },
+  {
+    "id": "2",
+    "title": "Преступление и наказание",
+    "author": "Фёдор Достоевский",
+    "publicationDate": "1866-01-01",
+    "isAvailable": false,
+    "borrower": "Иван Петров",
+    "dueDate": "2024-02-01"
+  },
+  {
+    "id": "3",
+    "title": "Война и мир",
+    "author": "Лев Толстой",
+    "publicationDate": "1869-01-01",
+    "isAvailable": true
+  },
+  {
+    "title": "123",
+    "author": "Классный Автор 12",
+    "publicationDate": "2112-03-12",
+    "id": "mhrvnzkxtszahandrbc",
+    "isAvailable": false,
+    "borrower": "Vasya",
+    "dueDate": "2025-11-10T00:00:00.000Z",
+    "updatedAt": "2025-11-09T17:34:15.466Z"
+  }
+]

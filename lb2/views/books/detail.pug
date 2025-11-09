@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .book-card
+    .book-main
+      if book.coverImage
+        img.cover(src=`/images/covers/${book.coverImage}` alt=book.title)
+      else
+        .cover.placeholder
+          i.fas.fa-book
+    .book-info
+      h2.book-title= book.title
+      p.book-author Автор: #{book.author}
+      p.book-pub Дата выпуска: #{new Date(book.publicationDate).toLocaleDateString('ru-RU')}
+      p
+        | Статус:
+        if book.isAvailable
+          span.tag.tag-available В наличии
+        else
+          span.tag.tag-borrowed Выдана
+      if !book.isAvailable
+        p Читатель: #{book.borrower || '-'}
+        if book.dueDate
+          p Вернуть до: #{new Date(book.dueDate).toLocaleDateString('ru-RU')}
+          if new Date(book.dueDate) < new Date()
+            span.tag.tag-overdue Просрочена
+    .book-actions
+      a.btn(href="/") ← Назад
+      a.btn(href=`/books/${book.id}/edit`) Редактировать
+      if book.isAvailable
+        button.btn.btn-warning(data-action="open-borrow" data-id=book.id) Выдать
+      else
+        button.btn.btn-success(data-action="do-return" data-id=book.id) Вернуть

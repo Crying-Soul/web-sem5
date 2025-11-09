@@ -1,0 +1,24 @@
+doctype html
+html(lang="ru")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width,initial-scale=1")
+    title Library
+    link(rel="preconnect" href="https://fonts.gstatic.com")
+    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet")
+    link(rel="stylesheet" href="/css/style.css")
+    script(defer src="https://kit.fontawesome.com/31a585b270.js")
+    block head
+  body
+    header.site-header
+      .container
+        a.brand(href="/")
+          i.fas.fa-book-open
+          span.brand-text Домашняя библиотека
+        nav
+          a.btn(href="/books/create") <i class="fas fa-plus"></i> Добавить
+    main.container
+      block content
+    include ../views/partials/modals.pug
+    script(src="/js/app.js" defer)
+    block scripts

@@ -1,0 +1,7 @@
+extends ./layout
+
+block content
+  .error
+    h2 Ошибка
+    p= message || 'Что-то пошло не так'
+    a.btn(href="/") ← На главную

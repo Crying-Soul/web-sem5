@@ -1,0 +1,47 @@
+extends ../layout
+
+block content
+  .page-head
+    h1.page-title Список книг
+    form#filter-form.form-inline
+      select.input(name="isAvailable")
+        option(value="") Все
+        option(value="true" selected=filters.isAvailable==='true') В наличии
+        option(value="false" selected=filters.isAvailable==='false') Выданы
+      label.checkbox
+        input(type="checkbox" name="isOverdue" checked=filters.isOverdue==='true')
+        | Просрочены
+      button.btn.btn-outline(type="submit") Применить
+  if books.length === 0
+    .empty
+      i.fas.fa-book-open.fa-3x
+      p Нет книг — добавьте первую
+  else
+    table.table
+      thead
+        tr
+          th Название
+          th Автор
+          th Дата выпуска
+          th Статус
+          th.actions Действия
+      tbody#books-table-body
+        each book in books
+          tr(data-id=book.id)
+            td.title= book.title
+            td.author= book.author
+            td= new Date(book.publicationDate).toLocaleDateString('ru-RU')
+            td
+              if book.isAvailable
+                span.tag.tag-available В наличии
+              else
+                span.tag.tag-borrowed Выдана
+                if book.dueDate && new Date(book.dueDate) < new Date()
+                  span.tag.tag-overdue Просрочена
+            td.actions
+              a.icon-btn(href=`/books/${book.id}` title="Просмотр")
+                i.fas.fa-eye
+              a.icon-btn(href=`/books/${book.id}/edit` title="Редактировать")
+                i.fas.fa-edit
+              button.icon-btn.icon-delete(title="Удалить" data-id=book.id)
+                i.fas.fa-trash
