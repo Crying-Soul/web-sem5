@@ -1,0 +1,37 @@
+
+doctype html
+html(lang="ru")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Социальная сеть
+    // Для Gulp-сборки
+    link(rel="stylesheet", href="/build/css/main.min.css")
+    // Для Webpack-сборки
+    // link(rel="stylesheet", href="/dist/styles.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css")
+  body.bg-light
+    // Для Gulp-сборки
+    script(src="/build/js/index.min.js")
+    // Для Webpack-сборки
+    // script(src="/dist/bundle.js")
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-primary.mb-4
+      .container-fluid
+        a.navbar-brand(href="#") СоцСеть
+        button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav")
+          span.navbar-toggler-icon
+        #navbarNav.collapse.navbar-collapse
+          ul.navbar-nav.me-auto.mb-2.mb-lg-0
+            li.nav-item
+              a.nav-link(href="/users.html") Пользователи
+            li.nav-item
+              a.nav-link(href="/friends.html") Друзья
+            li.nav-item
+              a.nav-link(href="/newsfeed.html") Новости
+          ul.navbar-nav.ms-auto
+            li.nav-item
+              a.nav-link(href="/login.html") Вход
+            li.nav-item
+              a.nav-link(href="/register.html") Регистрация
+    .container
+      block content

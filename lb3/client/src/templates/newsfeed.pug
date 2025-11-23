@@ -1,0 +1,10 @@
+extends index.pug
+
+block content
+  .card.shadow-sm.mt-4
+    .card-header.bg-info.text-white
+      h2.mb-0 Новости друзей
+    .card-body.bg-white
+      ul.list-group.list-group-flush
+        each message in feed
+          +newsItem(message)

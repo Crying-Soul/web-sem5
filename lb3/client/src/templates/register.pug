@@ -1,0 +1,19 @@
+form#registerForm.p-4.border.rounded.bg-light
+  h2.mb-3 Регистрация
+  .mb-3
+    label.form-label(for="fullName") ФИО
+    input#fullName.form-control(type="text" required)
+  .mb-3
+    label.form-label(for="birthDate") Дата рождения
+    input#birthDate.form-control(type="date" required)
+  .mb-3
+    label.form-label(for="email") Email
+    input#email.form-control(type="email" required)
+  .mb-3
+    label.form-label(for="photo") Фото (URL)
+    input#photo.form-control(type="text")
+  .mb-3
+    label.form-label(for="password") Пароль
+    input#password.form-control(type="password" required)
+  .mb-3.text-danger#register-error(style="display:none")
+  button.btn.btn-primary.w-100(type="submit") Зарегистрироваться
