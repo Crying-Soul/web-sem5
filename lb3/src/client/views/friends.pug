@@ -1,0 +1,28 @@
+extends layout
+
+block title
+    title Друзья пользователя
+
+block content
+    .container.mt-4
+        .row
+            .col-12
+                .d-flex.justify-content-between.align-items-center.mb-4
+                    h1.col-4 Друзья пользователя
+                    button#newsBtn.btn.btn-outline-info.btn-sm.friend-news-btn.col-3 Новости друзей
+                    button#backBtn.btn.btn-secondary.col-2 Назад
+                #friendsContainer.row
+
+block templates
+    template#friendCardTemplate
+        .col-md-6.col-lg-4
+            .card.user-card
+                .card-body.text-center
+                    h5.friend-name
+                    p.text-muted.friend-email
+                    p
+                        small Друзья с:
+                        span.friendship-date
+
+block scripts
+    script(src="js/friends.js")

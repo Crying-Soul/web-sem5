@@ -1,0 +1,84 @@
+extends layout
+
+block title
+    title Управление пользователями
+
+block content
+    .container.mt-4
+        .row
+            .col-12
+                .d-flex.justify-content-between.align-items-center.mb-4
+                    h1 Пользователи
+                    a.btn.btn-outline-success(href="http://localhost:4200/profile" target="_blank")
+                        i.bi.bi-box-arrow-up-right
+                        |  Перейти в приложение
+                    button#refreshBtn.btn.btn-primary Обновить
+                #usersContainer.row
+
+block templates
+    //- Шаблон карточки пользователя
+    template#userCardTemplate
+        .col-md-6.col-lg-4.g-1
+            .card.user-card
+                .card-header.d-flex.justify-content-between.align-items-center
+                    h5.user-name
+                    span.badge.status-badge
+                .card-body
+                    .text-center.mb-3
+                    p
+                        strong Email:
+                        span.user-email
+                    p
+                        strong Дата рождения:
+                        span.user-birthDate
+                    p
+                        strong Роль:
+                        span.user-role
+                    p
+                        strong Статус:
+                        span.user-status
+                    .btn-group.w-100
+                        button.btn.btn-outline-primary.btn-sm.user-edit-btn
+                            i.bi.bi-pencil-square
+                        button.btn.btn-outline-info.btn-sm.user-friends-btn
+                            i.bi.bi-people
+                        button.btn.btn-outline-secondary.btn-sm.user-messages-btn
+                            i.bi.bi-chat-left-text
+
+    //- Модальное окно редактирования пользователя
+    .modal.fade#editUserModal(tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    h5.modal-title#editUserModalLabel Редактирование пользователя
+                    button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+                .modal-body
+                    form#editUserForm
+                        input(type="hidden" id="editUserId")
+                        .mb-3
+                            label.form-label(for="editUserName") Имя и фамилия
+                            input.form-control#editUserName(type="text")
+                        .mb-3
+                            label.form-label(for="editUserEmail") Email
+                            input.form-control#editUserEmail(type="email")
+                        .mb-3
+                            label.form-label(for="editUserbirthDate") Дата рождения
+                            input.form-control#editUserbirthDate(type="date")
+                        .mb-3
+                            label.form-label(for="editUserRole") Роль
+                            select.form-select#editUserRole
+                                option(value="user") Пользователь
+                                option(value="admin") Администратор
+                        .mb-3
+                            label.form-label(for="editUserStatus") Статус
+                            select.form-select#editUserStatus
+                                option(value="unconfirmed") Не подтверждённый
+                                option(value="active") Активный
+                                option(value="blocked") Заблокированный
+                .modal-footer
+                    button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Отмена
+                    button.btn.btn-primary#saveUserChanges(type="button") Сохранить изменения
+
+block scripts
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js")
+    script(src="js/users.js")

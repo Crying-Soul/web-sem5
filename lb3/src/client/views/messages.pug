@@ -1,0 +1,31 @@
+extends layout
+
+block title
+    title Сообщения пользователя
+
+block content
+    .container.mt-4
+        .row
+            .col-12
+                .d-flex.justify-content-between.align-items-center.mb-4
+                    h1 Сообщения пользователя
+                    button#backBtn.btn.btn-secondary.col-2 Назад
+                #messagesContainer.row
+
+block templates
+    template#messageCardTemplate
+        .col-12
+            .card.message-card.mb-3
+                .card-body
+                    .d-flex.justify-content-between.align-items-start.mb-2
+                        div
+                            h6.card-title.mb-0.message-user-name
+                            .col-12
+                                small.text-muted
+                                    |Кому:
+                                    span.message-receiver-name
+                        small.text-muted.message-date.invisible
+                    p.card-text.message-content
+
+block scripts
+    script(src="js/messages.js")

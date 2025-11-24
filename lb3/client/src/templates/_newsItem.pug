@@ -1,7 +1,0 @@
-mixin newsItem(message)
-  li.list-group-item.d-flex.align-items-center
-    img(src=message.authorPhoto, width="32" class="rounded-circle me-2")
-    .flex-grow-1
-      span.fw-bold= message.authorName
-      | : #{message.text}
-    span.text-muted.ms-2 (#{message.date})

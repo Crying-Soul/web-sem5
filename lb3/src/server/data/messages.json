@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "senderId": 2,
+    "receiverId": 1,
+    "content": "123",
+    "timestamp": "2025-11-10T14:28:42.758Z",
+    "read": false
+  },
+  {
+    "id": 2,
+    "senderId": 1,
+    "receiverId": 2,
+    "content": "321",
+    "timestamp": "2025-11-10T14:28:44.429Z",
+    "read": false
+  },
+  {
+    "id": 3,
+    "senderId": 1,
+    "receiverId": 2,
+    "content": "123",
+    "timestamp": "2025-11-10T14:28:44.754Z",
+    "read": false
+  },
+  {
+    "id": 4,
+    "senderId": 2,
+    "receiverId": 1,
+    "content": "213",
+    "timestamp": "2025-11-10T14:28:46.272Z",
+    "read": false
+  }
+]

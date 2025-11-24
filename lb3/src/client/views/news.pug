@@ -1,0 +1,29 @@
+extends layout
+
+block title
+    title Новости друзей
+
+block content
+    .container.mt-4
+        .row
+            .col-12
+                .d-flex.justify-content-between.align-items-center.mb-4
+                    h1 Новости друзей
+                    button#backBtn.btn.btn-secondary.col-2 Назад
+                #newsContainer.row
+
+block templates
+    template#newsCardTemplate
+        .col-12
+            .card.news-card.mb-3
+                .card-header.d-flex.justify-content-between.align-items-center
+                    .d-flex.align-items-center
+                        div
+                            h6.mb-0.news-author-name
+                            small.text-muted.news-date
+                .card-body
+                    p.card-text.news-content
+                    .news-photos
+
+block scripts
+    script(src="js/news.js")

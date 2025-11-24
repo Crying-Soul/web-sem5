@@ -1,0 +1,317 @@
+// User card styles
+.user-card {
+  .card-hover();
+  border: none;
+  border-radius: @border-radius-lg;
+  background: @card-bg;
+  box-shadow: @shadow-md;
+  margin: 8px;
+
+  .card-header {
+    background: @gradient-primary;
+    border: none;
+    border-radius: @border-radius-lg @border-radius-lg 0 0 !important;
+    padding: 1.25rem;
+
+    h5 {
+      color: white;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .status-badge {
+      .status-badge();
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+    p {
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+
+      strong {
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      span {
+        color: #1e293b;
+        font-weight: 400;
+      }
+    }
+
+    .btn-group {
+      margin-top: 1rem;
+
+
+      .btn {
+        border-radius: @border-radius;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        margin-right: 10px;
+
+        &.btn-outline-primary {
+          border: 2px solid @primary-color;
+          color: @primary-color;
+
+          &:hover {
+            background: @primary-color;
+            color: white;
+          }
+        }
+
+        &.btn-outline-info {
+          border: 2px solid @info-color;
+          color: @info-color;
+
+          &:hover {
+            background: @info-color;
+            color: white;
+          }
+        }
+        &.btn-outline-secondary {
+          border: 2px solid @m-color;
+          color: @m-color;
+
+          &:hover {
+            background: @info-color;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+// News card styles
+.news-card {
+  .card-hover();
+  border: none;
+  border-radius: @border-radius-lg;
+  background: @card-bg;
+  box-shadow: @shadow-md;
+
+  .card-header {
+    background: @light-bg;
+    border-bottom: 1px solid @border-color;
+    padding: 1.25rem;
+
+    h6 {
+      color: #1e293b;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    small {
+      color: #64748b;
+    }
+
+    .status-badge {
+      .status-badge();
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+
+    .card-text {
+      color: #374151;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .news-photos {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+
+      .news-photo {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: @border-radius;
+        border: 2px solid @border-color;
+        transition: transform 0.2s;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+
+  .card-footer {
+    background: @light-bg;
+    border-top: 1px solid @border-color;
+    padding: 1rem 1.5rem;
+
+    .btn {
+      border-radius: @border-radius;
+      font-weight: 500;
+      padding: 0.5rem 1.25rem;
+
+      &.btn-warning {
+        background: @gradient-warning;
+        border: none;
+        color: white;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+
+      &.btn-success {
+        background: @gradient-success;
+        border: none;
+        color: white;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+// Friend card styles
+.friend-card {
+  .card-hover();
+  border: none;
+  border-radius: @border-radius-lg;
+  background: @card-bg;
+  box-shadow: @shadow-md;
+
+  .card-body {
+    padding: 1rem 1.5rem;
+
+    h5 {
+      color: #1e293b;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .friend-email {
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+
+      span {
+        color: #475569;
+        font-weight: 500;
+
+      }
+    }
+
+    .btn-group {
+      .btn {
+        border-radius: @border-radius;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+
+        &.btn-outline-primary {
+          border: 2px solid @primary-color;
+          color: @primary-color;
+
+          &:hover {
+            background: @primary-color;
+            color: white;
+          }
+        }
+
+        &.btn-outline-info {
+          border: 2px solid @info-color;
+          color: @info-color;
+
+          &:hover {
+            background: @info-color;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Message card styles
+.message-card {
+  .card-hover();
+  border: none;
+  border-radius: @border-radius-lg;
+  background: @card-bg;
+  box-shadow: @shadow-md;
+  transition: all 0.3s ease;
+  border-left: 4px solid @primary-color;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: @shadow-lg;
+    border-left-color: @secondary-color;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+
+    .d-flex.justify-content-between.align-items-start {
+      margin-bottom: 1rem;
+
+      div:first-child {
+        flex: 1;
+
+        h6.card-title {
+          color: #1e293b;
+          font-weight: 600;
+          font-size: 1.1rem;
+          margin-bottom: 0.25rem;
+
+          &.message-user-name {
+            background: @gradient-primary;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+          }
+        }
+
+        small.text-muted {
+          color: #64748b !important;
+          font-size: 0.875rem;
+
+          span.message-receiver-name {
+            color: @primary-color;
+            font-weight: 500;
+            margin-left: 0.25rem;
+          }
+        }
+      }
+
+      .message-date {
+        color: #94a3b8 !important;
+        font-size: 0.8rem;
+        font-weight: 500;
+        background: #f8fafc;
+        padding: 0.25rem 0.5rem;
+        border-radius: @border-radius;
+        white-space: nowrap;
+      }
+    }
+
+    .card-text.message-content {
+      color: #374151;
+      line-height: 1.6;
+      font-size: 0.95rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: @border-radius;
+      border-left: 3px solid @info-color;
+      margin-bottom: 0;
+    }
+  }
+}
+

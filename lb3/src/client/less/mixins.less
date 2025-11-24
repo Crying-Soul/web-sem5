@@ -1,0 +1,37 @@
+.card-hover() {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: @shadow-lg;
+  }
+}
+
+.status-badge() {
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+
+  &.active {
+    background: @gradient-success;
+    color: white;
+  }
+
+  &.blocked {
+    background: @gradient-danger;
+    color: white;
+  }
+
+  &.unconfirmed {
+    background: @gradient-warning;
+    color: white;
+  }
+}
+
+.glass-effect() {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
