@@ -20,14 +20,14 @@ export const compileJS = () => {
                     targets: {
                         browsers: ['last 2 versions', 'ie >= 11']
                     },
-                    modules: false // Сохраняем ES6 модули для tree-shaking
+                    modules: false
                 }]
             ],
             plugins: [
-                '@babel/plugin-syntax-dynamic-import' // Поддержка динамических импортов
+                '@babel/plugin-syntax-dynamic-import'
             ]
         }))
-        .pipe(terser()) // Минификация после транспиляции
+        .pipe(terser())
         .pipe(gulp.dest('dist-gulp/js'));
 };
 
@@ -44,7 +44,6 @@ export const copyImages = () => {
         .pipe(gulp.dest('dist-gulp/images'));
 };
 
-// Watch tasks
 export const watchLess = () => {
     return gulp.watch('src/client/less/**/*.less', compileLess);
 };
@@ -61,15 +60,11 @@ export const watchImages = () => {
     return gulp.watch('src/client/images/**/*', copyImages);
 };
 
-// Основная сборка
 export const build = gulp.parallel(compileLess, compileJS, compilePug, copyImages);
 
-// Development mode с вотчерами
 export const dev = () => {
-    // Сначала выполняем полную сборку
     build();
-
-    // Затем запускаем вотчеры
+    
     gulp.watch('src/client/less/**/*.less', compileLess);
     gulp.watch('src/client/js/**/*.js', compileJS);
     gulp.watch('src/client/views/**/*.pug', compilePug);
@@ -78,7 +73,6 @@ export const dev = () => {
     console.log('🚀 Gulp watchers started! Watching for changes...');
 };
 
-// Отдельные watch задачи
 export const watch = gulp.parallel(watchLess, watchJS, watchPug, watchImages);
 
 export default build;

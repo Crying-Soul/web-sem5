@@ -4,80 +4,131 @@ block title
     title Управление пользователями
 
 block content
-    .container.mt-4
-        .row
-            .col-12
-                .d-flex.justify-content-between.align-items-center.mb-4
-                    h1 Пользователи
-                    a.btn.btn-outline-success(href="http://localhost:4200/profile" target="_blank")
-                        i.bi.bi-box-arrow-up-right
-                        |  Перейти в приложение
-                    button#refreshBtn.btn.btn-primary Обновить
-                #usersContainer.row
+    .container
+        .main-container
+            .row
+                .col-12
+                    .d-flex.flex-column.flex-md-row.justify-content-between.align-items-center.mb-4
+                        h1.page-header Управление пользователями
+                        .action-buttons
+                            a.btn.action-btn.btn-success(href="http://localhost:4200/profile" target="_blank")
+                                i.bi.bi-box-arrow-up-right
+                                |  Перейти в приложение
+                            button#refreshBtn.btn.action-btn.btn-primary
+                                i.bi.bi-arrow-clockwise
+                                |  Обновить
+                    
+                    // Stats Overview
+                    .stats-grid
+                        .stat-card
+                            .stat-number#totalUsers 0
+                            .stat-label Всего пользователей
+                        .stat-card
+                            .stat-number#activeUsers 0
+                            .stat-label Активных
+                        .stat-card
+                            .stat-number#adminUsers 0
+                            .stat-label Администраторов
+                    
+                    #usersContainer.row
 
 block templates
     //- Шаблон карточки пользователя
     template#userCardTemplate
-        .col-md-6.col-lg-4.g-1
-            .card.user-card
+        .col-md-6.col-lg-4.mb-4
+            .card.user-card.h-100
                 .card-header.d-flex.justify-content-between.align-items-center
-                    h5.user-name
+                    h5.user-name.mb-0
                     span.badge.status-badge
                 .card-body
-                    .text-center.mb-3
-                    p
-                        strong Email:
-                        span.user-email
-                    p
-                        strong Дата рождения:
-                        span.user-birthDate
-                    p
-                        strong Роль:
-                        span.user-role
-                    p
-                        strong Статус:
-                        span.user-status
+                    .user-avatar.mb-3.text-center
+                        .bg-light.rounded-circle.d-inline-flex.align-items-center.justify-content-center(style="width: 80px; height: 80px;")
+                            i.bi.bi-person-fill.text-muted(style="font-size: 2rem;")
+                    .user-info
+                        .info-item
+                            i.bi.bi-envelope-fill.text-primary
+                            strong Email:
+                            span.user-email
+                        .info-item
+                            i.bi.bi-calendar-event-fill.text-success
+                            strong Дата рождения:
+                            span.user-birthDate
+                        .info-item
+                            i.bi.bi-person-badge-fill.text-warning
+                            strong Роль:
+                            span.user-role
+                        .info-item
+                            i.bi.bi-circle-fill.text-info
+                            strong Статус:
+                            span.user-status
+                .card-footer.bg-transparent.border-0.pt-0
                     .btn-group.w-100
                         button.btn.btn-outline-primary.btn-sm.user-edit-btn
                             i.bi.bi-pencil-square
+                            span.d-none.d-sm-inline Редактировать
                         button.btn.btn-outline-info.btn-sm.user-friends-btn
-                            i.bi.bi-people
+                            i.bi.bi-people-fill
+                            span.d-none.d-sm-inline Друзья
                         button.btn.btn-outline-secondary.btn-sm.user-messages-btn
-                            i.bi.bi-chat-left-text
+                            i.bi.bi-chat-left-text-fill
+                            span.d-none.d-sm-inline Сообщения
 
     //- Модальное окно редактирования пользователя
     .modal.fade#editUserModal(tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true")
-        .modal-dialog
+        .modal-dialog.modal-dialog-centered
             .modal-content
                 .modal-header
-                    h5.modal-title#editUserModalLabel Редактирование пользователя
+                    h5.modal-title#editUserModalLabel 
+                        i.bi.bi-person-gear
+                        |  Редактирование пользователя
                     button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
                 .modal-body
                     form#editUserForm
                         input(type="hidden" id="editUserId")
+                        .row
+                            .col-md-6.mb-3
+                                label.form-label(for="editUserFirstName") 
+                                    i.bi.bi-person
+                                    |  Имя
+                                input.form-control#editUserFirstName(type="text" required maxlength="25")
+                            .col-md-6.mb-3
+                                label.form-label(for="editUserLastName") 
+                                    i.bi.bi-person
+                                    |  Фамилия
+                                input.form-control#editUserLastName(type="text" required maxlength="25")
                         .mb-3
-                            label.form-label(for="editUserName") Имя и фамилия
-                            input.form-control#editUserName(type="text")
+                            label.form-label(for="editUserEmail") 
+                                i.bi.bi-envelope
+                                |  Email
+                            input.form-control#editUserEmail(type="email" required)
                         .mb-3
-                            label.form-label(for="editUserEmail") Email
-                            input.form-control#editUserEmail(type="email")
-                        .mb-3
-                            label.form-label(for="editUserbirthDate") Дата рождения
+                            label.form-label(for="editUserbirthDate") 
+                                i.bi.bi-calendar
+                                |  Дата рождения
                             input.form-control#editUserbirthDate(type="date")
-                        .mb-3
-                            label.form-label(for="editUserRole") Роль
-                            select.form-select#editUserRole
-                                option(value="user") Пользователь
-                                option(value="admin") Администратор
-                        .mb-3
-                            label.form-label(for="editUserStatus") Статус
-                            select.form-select#editUserStatus
-                                option(value="unconfirmed") Не подтверждённый
-                                option(value="active") Активный
-                                option(value="blocked") Заблокированный
+                        .row
+                            .col-md-6.mb-3
+                                label.form-label(for="editUserRole") 
+                                    i.bi.bi-person-badge
+                                    |  Роль
+                                select.form-select#editUserRole
+                                    option(value="user") Пользователь
+                                    option(value="admin") Администратор
+                            .col-md-6.mb-3
+                                label.form-label(for="editUserStatus") 
+                                    i.bi.bi-circle-fill
+                                    |  Статус
+                                select.form-select#editUserStatus
+                                    option(value="unconfirmed") Не подтверждён
+                                    option(value="active") Активный
+                                    option(value="blocked") Заблокирован
                 .modal-footer
-                    button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Отмена
-                    button.btn.btn-primary#saveUserChanges(type="button") Сохранить изменения
+                    button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+                        i.bi.bi-x-circle
+                        |  Отмена
+                    button.btn.btn-primary#saveUserChanges(type="button")
+                        i.bi.bi-check-circle
+                        |  Сохранить изменения
 
 block scripts
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js")

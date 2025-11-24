@@ -4,7 +4,7 @@
     "firstName": "Бред",
     "lastName": "Питт",
     "birthDate": "1995-01-01",
-    "email": "brad_pitt@example.com",
+    "email": "brad_pitt@example.com1",
     "username": "immortal1",
     "password": "$2a$10$15hnHo300Dfg.oGwM7Ju9eJs.oqdlOb2CHrWyouOcwP.3N9FtpoYC",
     "role": "admin",
@@ -123,7 +123,7 @@
     "username": "immortal7",
     "password": "$2a$10$g4CpZf48yvUHuG1LqKIQxOfdzEo7lZjF0.i6j2lqQD0cljlYW5Imm",
     "role": "user",
-    "status": "unconfirmed",
+    "status": "active",
     "friends": [
       1
     ],

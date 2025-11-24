@@ -1,14 +1,16 @@
 {
-  "name": "social-network-admin_immortal1864",
+  "name": "social-network-panel",
   "version": "1.0.0",
   "description": "Social network administration panel with user management, friends, and news",
   "main": "src/server/app.js",
   "type": "module",
   "scripts": {
     "start": "node src/server/app.js",
+    "build": "npm run build:gulp && npm run build:webpack",
     "build:gulp": "gulp build",
     "build:webpack": "webpack --mode=production",
-    "dev": "nodemon src/server/app.js"
+    "dev": "nodemon src/server/app.js",
+    "dev:gulp": "gulp dev"
   },
   "keywords": [
     "social",
@@ -38,13 +40,13 @@
     "html-webpack-plugin": "^5.5.3",
     "mini-css-extract-plugin": "^2.7.6",
     "babel-loader": "^10.0.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "@babel/preset-env": "^7.28.3",
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.22.0",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "nodemon": "^3.0.1",
     "css-minimizer-webpack-plugin": "^7.0.2",
-    "pug-loader":"^2.4.0",
-    "css-loader": "^7.1.2"
+    "pug-loader": "^2.4.0",
+    "css-loader": "^7.1.2",
+    "terser-webpack-plugin": "^5.3.9"
   }
 }
