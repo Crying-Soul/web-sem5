@@ -130,5 +130,20 @@
     "photos": [],
     "news": [],
     "createdAt": "2025-11-10T14:29:20.476Z"
+  },
+  {
+    "id": 7,
+    "firstName": "Crying",
+    "lastName": "Soul",
+    "birthDate": "2011-11-10",
+    "email": "grebnevegor2000@mail.ru",
+    "username": "egor",
+    "password": "$2a$10$pIkQVLPvMqn.F2MN8a85gOuDJAGr4ABzTB2/YwJWBkPZTHgB8nX/m",
+    "role": "user",
+    "status": "unconfirmed",
+    "friends": [],
+    "photos": [],
+    "news": [],
+    "createdAt": "2025-11-24T11:20:44.246Z"
   }
 ]

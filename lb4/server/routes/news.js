@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const newsFilePath = path.join(__dirname, '../../../lab3/src/server/data/news.json');
-const usersFilePath = path.join(__dirname, '../../../lab3/src/server/data/users.json');
+const newsFilePath = path.join(__dirname, '../../../lb3/src/server/data/news.json');
+const usersFilePath = path.join(__dirname, '../../../lb3/src/server/data/users.json');
 
 export const router = express.Router();
 

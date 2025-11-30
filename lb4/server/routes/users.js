@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const usersFilePath = path.join(__dirname, '../../../lab3/src/server/data/users.json');
+const usersFilePath = path.join(__dirname, '../../../lb3/src/server/data/users.json');
 const assetsDir= path.join(__dirname, '../assets')
 
 // Настройка multer для загрузки файлов
@@ -145,7 +145,7 @@ router.delete('/profile/photo', ensureAuthenticated, async (req, res) => {
 router.get('/profile', ensureAuthenticated, async (req, res) => {
     try {
         const usersData = await fs.readFile(usersFilePath, 'utf8');
-        const users = JSON.parse(usersData);
+        const users = JSON.parse(usersData);        
         const user = users.find(u => u.id === req.user.id);
         if (user) {
             // Не возвращаем пароль
@@ -155,7 +155,7 @@ router.get('/profile', ensureAuthenticated, async (req, res) => {
             res.status(404).json({ error: 'User not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Error loading profile' });
+        res.status(500).json({ error: `Error loading profile. ${error}` });
     }
 });
 

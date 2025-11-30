@@ -5,12 +5,12 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const messagesFilePath = path.join(__dirname, '../../lab3/src/server/data/messages.json');
+const messagesFilePath = path.join(__dirname, '../../lb3/src/server/data/messages.json');
 
 export function setupWebSocket(server) {
     const io = new Server(server, {
         cors: {
-            origin: "http://localhost:4200",
+            origin: "https://localhost:4200",
             methods: ["GET", "POST"],
             credentials: true
         }
