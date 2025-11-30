@@ -1,5 +1,6 @@
+// news.js - исправленная версия для JWT
 import express from 'express';
-import { ensureAuthenticated } from '../middleware/auth.js';
+import { authenticateToken } from '../routes/auth.route.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,29 +12,41 @@ const usersFilePath = path.join(__dirname, '../../../lb3/src/server/data/users.j
 
 export const router = express.Router();
 
-// Получить ленту новостей
-router.get('/:userId', ensureAuthenticated, async (req, res) => {
+// Get news feed
+router.get('/:userId', authenticateToken, async (req, res) => {
     try {
-        const newsData = await fs.readFile(newsFilePath, 'utf8');
-        const usersData = await fs.readFile(usersFilePath, 'utf8');
+        const userId = parseInt(req.params.userId);
+        const [newsData, usersData] = await Promise.all([
+            fs.readFile(newsFilePath, 'utf8'),
+            fs.readFile(usersFilePath, 'utf8')
+        ]);
+
         let news = JSON.parse(newsData);
         const users = JSON.parse(usersData);
-        const userId=parseInt(req.params.userId);
-        const currentUser = users.find(user => user.id === userId);
 
-        news = currentUser?.friends
-            ? news.filter((n) => currentUser.friends.includes(n.authorId))
-            : [];
-        // Добавляем информацию об авторах к новостям
+        const currentUser = users.find(user => user.id === userId);
+        if (!currentUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Filter news by friends
+        if (currentUser.friends && currentUser.friends.length > 0) {
+            news = news.filter(post => currentUser.friends.includes(post.authorId));
+        } else {
+            news = [];
+        }
+
+        // Add author info
         const postsWithAuthors = news.map(post => {
             const author = users.find(user => user.id === post.authorId);
             return {
                 ...post,
-                authorName: author ? `${author.firstName} ${author.lastName}` : 'Неизвестный пользователь'
+                authorName: author ? `${author.firstName} ${author.lastName}` : 'Unknown User',
+                authorAvatar: author?.photos?.[0] || null
             };
         });
 
-        // Сортируем по дате (новые сначала)
+        // Sort by date (newest first)
         postsWithAuthors.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         res.json({ posts: postsWithAuthors });
@@ -43,37 +56,56 @@ router.get('/:userId', ensureAuthenticated, async (req, res) => {
     }
 });
 
-// Добавить новую запись
-router.post(`/:userId`, ensureAuthenticated, async (req, res) => {
+// Add new post
+router.post('/:userId', authenticateToken, async (req, res) => {
     try {
         const { content } = req.body;
-        const newsData = await fs.readFile(newsFilePath, 'utf8');
-        const usersData = await fs.readFile(usersFilePath, 'utf8');
-        const userId=parseInt(req.params.userId);
+        const userId = parseInt(req.params.userId);
+
+        if (!content || content.trim() === '') {
+            return res.status(400).json({ error: 'Content is required' });
+        }
+
+        const [newsData, usersData] = await Promise.all([
+            fs.readFile(newsFilePath, 'utf8'),
+            fs.readFile(usersFilePath, 'utf8')
+        ]);
+
         const news = JSON.parse(newsData);
         const users = JSON.parse(usersData);
-        // Создаем новую запись
+
+        // Create new post
         const newPost = {
-            id: news.length > 0 ? Math.max(...news.map(n => n.id)) + 1 : 1,
+            id: Math.max(0, ...news.map(n => n.id)) + 1,
             authorId: userId,
-            content,
-            date: new Date().toISOString().split('T')[0]
+            content: content.trim(),
+            date: new Date().toISOString(),
+            likes: 0,
+            comments: []
         };
+
         news.push(newPost);
-        // Обновляем список новостей пользователя
+
+        // Update user's news
         const userIndex = users.findIndex(u => u.id === userId);
         if (userIndex !== -1) {
+            if (!users[userIndex].news) {
+                users[userIndex].news = [];
+            }
             users[userIndex].news.push(newPost.id);
         }
 
-        await fs.writeFile(newsFilePath, JSON.stringify(news, null, 2));
-        await fs.writeFile(usersFilePath, JSON.stringify(users, null, 2));
+        await Promise.all([
+            fs.writeFile(newsFilePath, JSON.stringify(news, null, 2)),
+            fs.writeFile(usersFilePath, JSON.stringify(users, null, 2))
+        ]);
 
-        // Добавляем информацию об авторе для ответа
-        const author = users.find(user => user.id === req.userId);
+        // Add author info for response
+        const author = users.find(user => user.id === userId);
         const postWithAuthor = {
             ...newPost,
-            authorName: author ? `${author.firstName} ${author.lastName}` : 'Вы'
+            authorName: author ? `${author.firstName} ${author.lastName}` : 'You',
+            authorAvatar: author?.photos?.[0] || null
         };
 
         res.json({

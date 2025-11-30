@@ -1,5 +1,6 @@
+// messages.js - исправленная версия для JWT
 import express from 'express';
-import { ensureAuthenticated } from '../middleware/auth.js';
+import { authenticateToken } from '../routes/auth.route.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,18 +12,19 @@ const usersFilePath = path.join(__dirname, '../../../lb3/src/server/data/users.j
 
 export const router = express.Router();
 
-// Получить список диалогов (пользователей, с которыми есть переписка)
-router.get('/conversations', ensureAuthenticated, async (req, res) => {
+// Get conversations
+router.get('/conversations', authenticateToken, async (req, res) => {
     try {
-        const messagesData = await fs.readFile(messagesFilePath, 'utf8');
-        const usersData = await fs.readFile(usersFilePath, 'utf8');
+        const [messagesData, usersData] = await Promise.all([
+            fs.readFile(messagesFilePath, 'utf8'),
+            fs.readFile(usersFilePath, 'utf8')
+        ]);
 
         const messages = JSON.parse(messagesData);
         const users = JSON.parse(usersData);
-
         const currentUserId = req.user.id;
 
-        // Находим всех пользователей, с которыми есть переписка
+        // Find all users with conversations
         const conversationUserIds = new Set();
         messages.forEach(message => {
             if (message.senderId === currentUserId) {
@@ -32,7 +34,7 @@ router.get('/conversations', ensureAuthenticated, async (req, res) => {
             }
         });
 
-        // Добавляем друзей для возможности начать новый диалог
+        // Add friends for potential new conversations
         const currentUser = users.find(u => u.id === currentUserId);
         if (currentUser && currentUser.friends) {
             currentUser.friends.forEach(friendId => {
@@ -40,44 +42,45 @@ router.get('/conversations', ensureAuthenticated, async (req, res) => {
             });
         }
 
-        const conversations = Array.from(conversationUserIds).map(userId => {
-            const user = users.find(u => u.id === userId);
-            if (!user) return null;
+        const conversations = Array.from(conversationUserIds)
+            .map(userId => {
+                const user = users.find(u => u.id === userId);
+                if (!user) return null;
 
-            // Находим последнее сообщение в диалоге
-            const lastMessage = messages
-                .filter(m =>
+                // Find last message
+                const conversationMessages = messages.filter(m =>
                     (m.senderId === currentUserId && m.receiverId === userId) ||
                     (m.senderId === userId && m.receiverId === currentUserId)
-                )
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+                );
 
-            // Считаем непрочитанные сообщения
-            const unreadCount = messages.filter(m =>
-                m.senderId === userId &&
-                m.receiverId === currentUserId &&
-                !m.read
-            ).length;
+                const lastMessage = conversationMessages
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
 
-            const { password, ...userWithoutPassword } = user;
-            return {
-                user: userWithoutPassword,
-                lastMessage: lastMessage ? {
-                    content: lastMessage.content,
-                    timestamp: lastMessage.timestamp,
-                    isOwn: lastMessage.senderId === currentUserId
-                } : null,
-                unreadCount
-            };
-        }).filter(conv => conv !== null);
+                // Count unread messages
+                const unreadCount = messages.filter(m =>
+                    m.senderId === userId &&
+                    m.receiverId === currentUserId &&
+                    !m.read
+                ).length;
 
-        // Сортируем по времени последнего сообщения (сверху самые новые)
-        conversations.sort((a, b) => {
-            if (!a.lastMessage && !b.lastMessage) return 0;
-            if (!a.lastMessage) return 1;
-            if (!b.lastMessage) return -1;
-            return new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp);
-        });
+                const { password, ...userWithoutPassword } = user;
+                return {
+                    user: userWithoutPassword,
+                    lastMessage: lastMessage ? {
+                        content: lastMessage.content,
+                        timestamp: lastMessage.timestamp,
+                        isOwn: lastMessage.senderId === currentUserId
+                    } : null,
+                    unreadCount
+                };
+            })
+            .filter(conv => conv !== null)
+            .sort((a, b) => {
+                if (!a.lastMessage && !b.lastMessage) return 0;
+                if (!a.lastMessage) return 1;
+                if (!b.lastMessage) return -1;
+                return new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp);
+            });
 
         res.json({ conversations });
     } catch (error) {
@@ -86,25 +89,27 @@ router.get('/conversations', ensureAuthenticated, async (req, res) => {
     }
 });
 
-// Получить историю сообщений с конкретным пользователем
-router.get('/conversation/:userId', ensureAuthenticated, async (req, res) => {
+// Get conversation with specific user
+router.get('/conversation/:userId', authenticateToken, async (req, res) => {
     try {
         const otherUserId = parseInt(req.params.userId);
         const currentUserId = req.user.id;
 
-        const messagesData = await fs.readFile(messagesFilePath, 'utf8');
-        const usersData = await fs.readFile(usersFilePath, 'utf8');
+        const [messagesData, usersData] = await Promise.all([
+            fs.readFile(messagesFilePath, 'utf8'),
+            fs.readFile(usersFilePath, 'utf8')
+        ]);
 
         const messages = JSON.parse(messagesData);
         const users = JSON.parse(usersData);
 
-        // Проверяем существование пользователя
+        // Check if user exists
         const otherUser = users.find(u => u.id === otherUserId);
         if (!otherUser) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Получаем сообщения между текущим пользователем и выбранным
+        // Get conversation messages
         const conversationMessages = messages
             .filter(message =>
                 (message.senderId === currentUserId && message.receiverId === otherUserId) ||
@@ -112,29 +117,23 @@ router.get('/conversation/:userId', ensureAuthenticated, async (req, res) => {
             )
             .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-        // Помечаем сообщения как прочитанные
-        const updatedMessages = [...messages];
-        let hasUpdates = false;
-
-        conversationMessages.forEach(msg => {
-            if (msg.receiverId === currentUserId && !msg.read) {
-                const msgIndex = updatedMessages.findIndex(m => m.id === msg.id);
-                if (msgIndex !== -1) {
-                    updatedMessages[msgIndex].read = true;
-                    hasUpdates = true;
-                }
+        // Mark messages as read
+        const updatedMessages = messages.map(msg => {
+            if (msg.receiverId === currentUserId && msg.senderId === otherUserId && !msg.read) {
+                return { ...msg, read: true };
             }
+            return msg;
         });
 
-        if (hasUpdates) {
-            await fs.writeFile(messagesFilePath, JSON.stringify(updatedMessages, null, 2));
-        }
+        await fs.writeFile(messagesFilePath, JSON.stringify(updatedMessages, null, 2));
 
         const { password, ...otherUserWithoutPassword } = otherUser;
-
         res.json({
             user: otherUserWithoutPassword,
-            messages: conversationMessages
+            messages: conversationMessages.map(msg => ({
+                ...msg,
+                read: msg.receiverId === currentUserId ? true : msg.read
+            }))
         });
     } catch (error) {
         console.error('Error loading conversation:', error);
@@ -142,8 +141,8 @@ router.get('/conversation/:userId', ensureAuthenticated, async (req, res) => {
     }
 });
 
-// Отправить сообщение
-router.post('/send/:userId', ensureAuthenticated, async (req, res) => {
+// Send message
+router.post('/send/:userId', authenticateToken, async (req, res) => {
     try {
         const receiverId = parseInt(req.params.userId);
         const { content } = req.body;
@@ -153,21 +152,21 @@ router.post('/send/:userId', ensureAuthenticated, async (req, res) => {
             return res.status(400).json({ error: 'Message content is required' });
         }
 
-        const messagesData = await fs.readFile(messagesFilePath, 'utf8');
-        const usersData = await fs.readFile(usersFilePath, 'utf8');
+        const [messagesData, usersData] = await Promise.all([
+            fs.readFile(messagesFilePath, 'utf8'),
+            fs.readFile(usersFilePath, 'utf8')
+        ]);
 
         const messages = JSON.parse(messagesData);
         const users = JSON.parse(usersData);
 
-        // Проверяем существование получателя
-        const receiver = users.find(u => u.id === receiverId);
-        if (!receiver) {
+        // Check if receiver exists
+        if (!users.find(u => u.id === receiverId)) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Создаем новое сообщение
         const newMessage = {
-            id: Math.max(...messages.map(m => m.id), 0) + 1,
+            id: Math.max(0, ...messages.map(m => m.id)) + 1,
             senderId: currentUserId,
             receiverId: receiverId,
             content: content.trim(),
@@ -188,8 +187,8 @@ router.post('/send/:userId', ensureAuthenticated, async (req, res) => {
     }
 });
 
-// Пометить сообщения как прочитанные
-router.post('/read/:userId', ensureAuthenticated, async (req, res) => {
+// Mark messages as read
+router.post('/read/:userId', authenticateToken, async (req, res) => {
     try {
         const otherUserId = parseInt(req.params.userId);
         const currentUserId = req.user.id;
@@ -197,17 +196,14 @@ router.post('/read/:userId', ensureAuthenticated, async (req, res) => {
         const messagesData = await fs.readFile(messagesFilePath, 'utf8');
         const messages = JSON.parse(messagesData);
 
-        const updatedMessages = messages.map(message => {
-            if (message.senderId === otherUserId &&
-                message.receiverId === currentUserId &&
-                !message.read) {
-                return { ...message, read: true };
+        const updatedMessages = messages.map(msg => {
+            if (msg.senderId === otherUserId && msg.receiverId === currentUserId && !msg.read) {
+                return { ...msg, read: true };
             }
-            return message;
+            return msg;
         });
 
         await fs.writeFile(messagesFilePath, JSON.stringify(updatedMessages, null, 2));
-
         res.json({ message: 'Messages marked as read' });
     } catch (error) {
         console.error('Error marking messages as read:', error);

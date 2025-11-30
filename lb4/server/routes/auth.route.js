@@ -1,164 +1,195 @@
-// auth.route.js - исправленная версия
 import express from "express";
-import bcrypt from "bcryptjs";
-import {
-  passport,
-  ensureAuthenticated,
-  ensureNotAuthenticated,
-  createUser,
-  findUser,
-} from "../middleware/auth.js";
+import jwt from "jsonwebtoken";
+import { createUser, findUser, findUserById, verifyPassword, hashPassword } from "../middleware/auth.js";
 
 export const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key-change-in-production";
 
-// Login (исправленный)
-router.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      console.error('Auth error:', err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
+// Валидация входных данных
+const validateLogin = (req, res, next) => {
+  const { username, password } = req.body;
+  
+  if (!username?.trim() || !password?.trim()) {
+    return res.status(400).json({ error: "Username and password are required" });
+  }
+  
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters" });
+  }
+  
+  next();
+};
+
+const validateRegister = (req, res, next) => {
+  const { firstName, lastName, birthDate, email, username, password } = req.body;
+
+  if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !username?.trim() || !password?.trim()) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters" });
+  }
+
+  if (username.length < 3) {
+    return res.status(400).json({ error: "Username must be at least 3 characters" });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  // Проверка возраста (14+ лет)
+  const birthDateObj = new Date(birthDate);
+  const minAgeDate = new Date();
+  minAgeDate.setFullYear(minAgeDate.getFullYear() - 14);
+  
+  if (birthDateObj > minAgeDate) {
+    return res.status(400).json({ error: "You must be at least 14 years old" });
+  }
+
+  next();
+};
+
+// Login with JWT
+router.post("/login", validateLogin, async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    console.log('🔐 LOGIN ATTEMPT for user:', username);
+
+    const user = await findUser(username);
     if (!user) {
-      return res.status(401).json({
-        error: "Authentication failed",
-        details: info?.message || "Invalid credentials",
-      });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    req.logIn(user, (err) => {
-      if (err) {
-        console.error('Login error:', err);
-        return res.status(500).json({ error: "Login failed" });
-      }
+    const isPasswordValid = await verifyPassword(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
-      console.log("=== AFTER LOGIN ===");
-      console.log("isAuthenticated:", req.isAuthenticated());
-      console.log("User:", req.user);
-      console.log("Session ID:", req.sessionID);
-      console.log("==================");
+    console.log('🔐 AUTH SUCCESS for user:', user.username);
 
-      // Возвращаем ответ сразу после успешного логина
-      return res.json({
-        message: "Login successful",
-        user: {
-          id: user.id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-        },
-      });
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        username: user.username,
+        role: user.role
+      }, 
+      JWT_SECRET, 
+      { expiresIn: '24h' }
+    );
+
+    const { password: _, ...userWithoutPassword } = user;
+
+    res.json({
+      message: "Login successful",
+      user: userWithoutPassword,
+      token: token
     });
-  })(req, res, next);
+
+  } catch (error) {
+    console.error('🔐 LOGIN ERROR:', error);
+    res.status(500).json({ error: "Server error during login" });
+  }
 });
 
-// Register (без изменений)
-router.post("/register", ensureNotAuthenticated, async (req, res) => {
+// Register
+router.post("/register", validateRegister, async (req, res) => {
   try {
-    const { firstName, lastName, birthDate, email, username, password } =
-      req.body;
+    const { firstName, lastName, birthDate, email, username, password } = req.body;
 
-    if (
-      !firstName ||
-      !lastName ||
-      !birthDate ||
-      !email ||
-      !username ||
-      !password
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Все поля обязательны для заполнения" });
-    }
+    console.log('🔐 REGISTER ATTEMPT for user:', username);
 
     const existingUser = await findUser(username);
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ error: "Пользователь с таким именем уже существует" });
+      return res.status(400).json({ error: "Username already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
     const user = await createUser({
-      firstName,
-      lastName,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
       birthDate,
-      email,
-      username,
+      email: email.trim(),
+      username: username.trim(),
       password: hashedPassword,
       role: "user",
-      status: "unconfirmed",
+      status: "active",
       friends: [],
       photos: [],
-      news: [],
+      news: []
     });
 
-    res.json({
-      message: "User created successfully",
-      user: {
-        id: user.id,
+    const token = jwt.sign(
+      { 
+        id: user.id, 
         username: user.username,
-      },
+        role: user.role
+      }, 
+      JWT_SECRET, 
+      { expiresIn: '24h' }
+    );
+
+    const { password: _, ...userWithoutPassword } = user;
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: userWithoutPassword,
+      token: token
     });
+
   } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ error: "Error creating user: " + error.message });
+    console.error('🔐 REGISTRATION ERROR:', error);
+    res.status(500).json({ error: "Error creating user" });
   }
 });
 
-// Logout (исправленный)
-router.post("/logout", ensureAuthenticated, (req, res) => {
-  req.logout((err) => {
+// Middleware для проверки JWT
+export function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: "Access token required" });
+  }
+
+  jwt.verify(token, JWT_SECRET, async (err, decoded) => {
     if (err) {
-      console.error('Logout error:', err);
-      return res.status(500).json({ error: "Error logging out" });
+      console.log('🔐 INVALID TOKEN:', err.message);
+      return res.status(403).json({ error: "Invalid or expired token" });
     }
-
-    // Очищаем cookie
-    res.clearCookie("connect.sid", {
-      path: '/',
-      domain: 'localhost'
-    });
-
-    // Уничтожаем сессию
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("Session destruction error:", err);
+    
+    try {
+      const user = await findUserById(decoded.id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
       }
-      res.json({ message: "Logout successful" });
-    });
+      
+      const { password, ...userWithoutPassword } = user;
+      req.user = userWithoutPassword;
+      
+      console.log('🔐 AUTH SUCCESS for user:', user.username);
+      next();
+    } catch (error) {
+      console.error('🔐 AUTH MIDDLEWARE ERROR:', error);
+      res.status(500).json({ error: "Server error during authentication" });
+    }
+  });
+}
+
+// Check auth status with JWT
+router.get("/status", authenticateToken, (req, res) => {
+  res.json({
+    authenticated: true,
+    user: req.user
   });
 });
 
-// Check auth status (улучшенный)
-router.get("/status", (req, res) => {
-  console.log("=== AUTH STATUS CHECK ===");
-  console.log("Session ID:", req.sessionID);
-  console.log("isAuthenticated:", req.isAuthenticated());
-  console.log("User:", req.user);
-  
-  if (req.isAuthenticated() && req.user) {
-    res.json({
-      authenticated: true,
-      user: {
-        id: req.user.id,
-        username: req.user.username,
-        role: req.user.role,
-        firstName: req.user.firstName,
-        lastName: req.user.lastName,
-        email: req.user.email,
-      },
-    });
-  } else {
-    res.json({ 
-      authenticated: false,
-      details: "No active session"
-    });
-  }
+// Logout
+router.post("/logout", authenticateToken, (req, res) => {
+  res.json({ message: "Logout successful" });
 });
 
-// Получить ID пользователя из сессии
-router.get("/user-id", ensureAuthenticated, (req, res) => {
-  res.json({ userId: req.user.id });
-});
+export default router;

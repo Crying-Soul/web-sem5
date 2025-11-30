@@ -145,5 +145,39 @@
     "photos": [],
     "news": [],
     "createdAt": "2025-11-24T11:20:44.246Z"
+  },
+  {
+    "id": 8,
+    "firstName": "Crying",
+    "lastName": "Soul",
+    "birthDate": "2011-11-08",
+    "email": "grebnevegor2000eger@gmail.com",
+    "username": "CryingSoul",
+    "password": "$2a$10$pK..qosLa6nBtEhuwsqV9OQ964KLcjtiV3kKD.UAtMCWSqq5ib9mC",
+    "role": "user",
+    "status": "active",
+    "createdAt": "2025-11-30T22:21:49.196Z",
+    "friends": [
+      9
+    ],
+    "photos": [],
+    "news": []
+  },
+  {
+    "id": 9,
+    "firstName": "123",
+    "lastName": "123",
+    "birthDate": "2008-01-29",
+    "email": "egor@mail.ru",
+    "username": "immortal11",
+    "password": "$2a$10$fvtGV6uDGcRga9UMPYpuDuE/ojMNtojY6Arb/rC8PbKLTrPQY9lKG",
+    "role": "user",
+    "status": "active",
+    "friends": [
+      8
+    ],
+    "photos": [],
+    "news": [],
+    "createdAt": "2025-11-30T23:46:10.874Z"
   }
 ]
