@@ -278,3 +278,26 @@ router.get('/', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Error loading friends' });
     }
 });
+
+router.delete('/cancel/:requestId', authenticateToken, async (req, res) => {
+    try {
+        const requestId = parseInt(req.params.requestId);
+        const friendsData = await fs.readFile(friendsFilePath, 'utf8');
+        const friends = JSON.parse(friendsData);
+
+        const requestIndex = friends.findIndex(f =>
+            f.id === requestId && f.userId === req.user.id && f.status === 'pending'
+        );
+
+        if (requestIndex === -1) {
+            return res.status(404).json({ error: 'Friend request not found' });
+        }
+
+        friends.splice(requestIndex, 1);
+        await fs.writeFile(friendsFilePath, JSON.stringify(friends, null, 2));
+
+        res.json({ message: 'Friend request cancelled successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error cancelling friend request' });
+    }
+});

@@ -63,13 +63,6 @@
     "date": "2025-11-30T23:44:01.816Z"
   },
   {
-    "id": 10,
-    "userId": 9,
-    "friendId": 8,
-    "status": "accepted",
-    "date": "2025-11-30T23:46:39.882Z"
-  },
-  {
     "id": 11,
     "userId": 9,
     "friendId": 7,
@@ -82,5 +75,12 @@
     "friendId": 6,
     "status": "pending",
     "date": "2025-11-30T23:47:01.721Z"
+  },
+  {
+    "id": 13,
+    "userId": 8,
+    "friendId": 9,
+    "status": "accepted",
+    "date": "2025-12-01T00:34:50.031Z"
   }
 ]

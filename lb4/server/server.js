@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = http.createServer(app);
 
-// Конфигурация CORS
+// Конфигурация CORS для Express
 const allowedOrigins = ['http://127.0.0.1:4200', 'http://localhost:4200'];
 
 app.use((req, res, next) => {
@@ -64,7 +64,6 @@ app.use("/assets", express.static(path.join(__dirname, "assets")));
 // Health check с проверкой БД
 app.get("/api/health", async (req, res) => {
   try {
-    // Можно добавить проверку подключения к БД если будет
     res.json({
       status: "OK",
       message: "JWT Auth Server is running",
@@ -78,6 +77,8 @@ app.get("/api/health", async (req, res) => {
     });
   }
 });
+
+setupWebSocket(server);
 
 // Error handling middleware
 app.use((error, req, res, next) => {
@@ -99,6 +100,7 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🚀 JWT Server running on http://localhost:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`WebSocket server initialized`);
 });
 
 export default app;

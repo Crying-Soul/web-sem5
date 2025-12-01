@@ -176,7 +176,9 @@
     "friends": [
       8
     ],
-    "photos": [],
+    "photos": [
+      "/assets/photo-1764548382705-766411969.jpg"
+    ],
     "news": [],
     "createdAt": "2025-11-30T23:46:10.874Z"
   }
